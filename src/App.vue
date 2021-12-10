@@ -1,5 +1,5 @@
 <template>
-  <div id="app" v-bind:class="{onHold: buttonHeld, running: running, ready: ready, app: true}">
+  <div id="app" v-bind:class="status">
     <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
     <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
     <Stopwatch ref="Stopwatch"/>
@@ -11,47 +11,48 @@ import HelloWorld from './components/HelloWorld.vue';
 import Stopwatch from './components/Stopwatch.vue';
 import Vue from 'vue';
 
+let waitTimeout;
 
 const app = Vue.component('app', {
-  // name: 'App',
   components: {
     HelloWorld,
     Stopwatch
   },
   data: () => ({
-    buttonHeld: false,
-    ready: false,
-    running: false,
+    status: 'none'
   }),
   
   created() {
     window.addEventListener('keydown', (e) => {
-      if (this.buttonHeld) {
+      if (this.status === 'holding' || this.status === 'ready' || this.status === 'wait') {
         return;
       }
+      console.log('keydown')
 
       const timer = this.$refs.Stopwatch;
-      if (timer.running){
+      if (this.status === 'running'){
         timer.stop();
-        this.running = false;
+        this.status = 'none';
       }
       else {
         if (e.code === 'Space') {
           timer.reset();
-          this.buttonHeld = true;
-          setTimeout(() => {
-            this.ready = true;
+          this.status = 'holding';
+          waitTimeout = setTimeout(() => {
+            this.status = 'ready';
           }, 500);
         }
       }
       
     });
     window.addEventListener('keyup', (e) => {
-      if (this.buttonHeld && e.code === 'Space') {
-        this.buttonHeld = false;
-        this.ready = false;
-        this.running = true;
+      if (this.status === 'ready' && e.code === 'Space') {
+        this.status = 'running';
         this.$refs.Stopwatch.start();
+      }
+      else if (this.status === 'holding') {
+        this.status = 'none';
+        clearTimeout(waitTimeout);
       }
 
     })            
@@ -65,14 +66,13 @@ export default app;
 </script>
 
 <style>
-.app {
+#app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #f9fbfc;
   font-size: 10rem;
-  background: #2d3436;
   margin: 0;
   padding: 0;
   height: 100%;
@@ -81,7 +81,9 @@ export default app;
   width: 100%;
   transition-property: background-color;
   transition-duration: 200ms;
-
+}
+.none { 
+  background: #2d3436;
 }
 body {
   padding: 0;
@@ -92,7 +94,7 @@ body {
 html {
   height: 100%;
 }
-.onHold {
+.holding {
   background: #4d0b0b;
 }
 .running {
