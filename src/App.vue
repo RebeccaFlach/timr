@@ -1,21 +1,27 @@
 <template>
-  <div id="app" v-bind:class="status">
-    <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
-    <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
-    <Stopwatch ref="Stopwatch" id="stopwatch"/>
-    <div id="example-1">
-      <p v-for="solve in history" :key="solve">
-        {{ (solve/1000).toFixed(2) }}
-      </p>
+  <div id="app">
+    <div id="main" v-bind:class="status">
+      
+      <Stopwatch ref="Stopwatch" id="stopwatch"/>
+      <div id="example-1" v-if="status === 'none'">
+        <p v-for="solve in history" :key="solve">
+          {{ (solve/1000).toFixed(2) }}
+        </p>
+      </div>
+    </div>
+
+    <div id="stats"> 
+      <p> test</p>
+
     </div>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import HelloWorld from './components/HelloWorld.vue';
 import Stopwatch from './components/Stopwatch.vue';
 import Vue from 'vue';
-import _ from 'underscore'
+import _ from 'underscore';
 
 let waitTimeout;
 
@@ -31,6 +37,7 @@ const app = Vue.component('app', {
   
   created() {
     window.addEventListener('keydown', (e) => {
+      e.preventDefault();
       if (this.status === 'holding' || this.status === 'ready') 
         return;
       
@@ -80,18 +87,22 @@ export default app;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #f9fbfc;
-  
   margin: 0;
   padding: 0;
-  height: 100%;
-  position: absolute;
-  top: 0;
   width: 100%;
   transition-property: background-color;
   transition-duration: 150ms;
+  background: #343d3f;
+}
+#main {
+  height: 100vh;
+  width: 100%;
+  padding-top: calc(50vh - 12rem);
 }
 #stopwatch {
   font-size: 10rem;
+  margin: 0 !important;
+  
 }
 .none { 
   background: #343d3f;
@@ -99,8 +110,6 @@ export default app;
 body {
   padding: 0;
   margin: 0;
-  height: 100%;
-  top: 0;
 }
 html {
   height: 100%;
