@@ -1,6 +1,6 @@
 <template>
     <div>
-        <p> {{formatTime(time) }} </p>
+        <p> {{(time/1000).toFixed(2) }} </p>
     </div>
 </template>
 
@@ -29,12 +29,7 @@ export default {
       reset() {
         this.time = 0;
       }, 
-      formatTime(time) {
-        const sec = Math.floor(time/1000);
-        const ms = time % 1000 + "";
-        console.log(ms)
-        return sec + ":" + (ms[0] || 0 ) + (ms[1] || 0);
-      }
+      
   }
 }
 

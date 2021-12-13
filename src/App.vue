@@ -2,7 +2,12 @@
   <div id="app" v-bind:class="status">
     <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
     <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
-    <Stopwatch ref="Stopwatch"/>
+    <Stopwatch ref="Stopwatch" id="stopwatch"/>
+    <div id="example-1">
+      <p v-for="solve in history" :key="solve">
+        {{ (solve/1000).toFixed(2) }}
+      </p>
+    </div>
   </div>
 </template>
 
@@ -10,6 +15,7 @@
 import HelloWorld from './components/HelloWorld.vue';
 import Stopwatch from './components/Stopwatch.vue';
 import Vue from 'vue';
+import _ from 'underscore'
 
 let waitTimeout;
 
@@ -19,20 +25,22 @@ const app = Vue.component('app', {
     Stopwatch
   },
   data: () => ({
-    status: 'none'
+    status: 'none',
+    history: [],
   }),
   
   created() {
     window.addEventListener('keydown', (e) => {
-      if (this.status === 'holding' || this.status === 'ready' || this.status === 'wait') {
+      if (this.status === 'holding' || this.status === 'ready') 
         return;
-      }
-      console.log('keydown')
+      
 
       const timer = this.$refs.Stopwatch;
       if (this.status === 'running'){
         timer.stop();
         this.status = 'none';
+        this.history.push(timer.time);
+        console.log(this.history)
       }
       else {
         if (e.code === 'Space') {
@@ -40,7 +48,7 @@ const app = Vue.component('app', {
           this.status = 'holding';
           waitTimeout = setTimeout(() => {
             this.status = 'ready';
-          }, 500);
+          }, 700);
         }
       }
       
@@ -72,7 +80,7 @@ export default app;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #f9fbfc;
-  font-size: 10rem;
+  
   margin: 0;
   padding: 0;
   height: 100%;
@@ -80,10 +88,13 @@ export default app;
   top: 0;
   width: 100%;
   transition-property: background-color;
-  transition-duration: 200ms;
+  transition-duration: 150ms;
+}
+#stopwatch {
+  font-size: 10rem;
 }
 .none { 
-  background: #2d3436;
+  background: #343d3f;
 }
 body {
   padding: 0;
@@ -98,9 +109,9 @@ html {
   background: #4d0b0b;
 }
 .running {
-  background: #121212;
+  background: #020202;
 }
 .ready {
-  background: #1d633a;
+  background: #134b2a;
 }
 </style>
