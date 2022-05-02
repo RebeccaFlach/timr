@@ -3,15 +3,45 @@
     <div id="main" v-bind:class="status">
       
       <Stopwatch ref="Stopwatch" id="stopwatch"/>
-      <div id="example-1" v-if="status === 'none'">
-        <p v-for="solve in history" :key="solve">
+      <div id="times" v-if="status === 'none'">
+        <p v-for="solve in history.reverse()" :key="solve">
           {{ (solve/1000).toFixed(2) }}
         </p>
       </div>
     </div>
 
     <div id="stats"> 
-      <p> test</p>
+      <div id="averages">
+        <div id="ao3">
+          <p class="avg-label">
+            ao3: 
+          </p>
+          <p class="avg-time">
+            12.56
+          </p>
+        </div>
+        <div id="avg">
+          <p class="avg-label">
+            average: 
+          </p>
+          <p class="avg-time">
+            12.56
+          </p>
+        </div>
+        <div id="ao12">
+          <p class="avg-label">
+            ao12: 
+          </p>
+          <p class="avg-time">
+            12.56
+          </p>
+        </div>
+      </div>
+      <div id="time-table">
+
+      </div>
+      <div id="graph">
+      </div>
 
     </div>
   </div>
@@ -97,9 +127,9 @@ export default app;
 #main {
   height: 100vh;
   width: 100%;
-  padding-top: calc(50vh - 12rem);
 }
 #stopwatch {
+  padding-top: calc(50vh - 12rem);
   font-size: 10rem;
   margin: 0 !important;
   
@@ -122,5 +152,16 @@ html {
 }
 .ready {
   background: #134b2a;
+}
+#times {
+  font-size: 1.5rem;
+}
+#stats {
+  border-top: 1px solid #545d5f;
+  /* background-color: #020202; */
+}
+#averages {
+  display: flex;
+  justify-content: space-around;
 }
 </style>
