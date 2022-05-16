@@ -4,12 +4,11 @@
       
       <Stopwatch ref="Stopwatch" id="stopwatch"/>
       <div id="times" v-if="status === 'none'">
-        <p v-for="solve in history.reverse()" :key="solve">
+        <p v-for="solve in history.slice(0,5)" :key="solve">
           {{ (solve/1000).toFixed(2) }}
         </p>
       </div>
     </div>
-
     <div id="stats"> 
       <div id="averages">
         <div id="ao3">
@@ -17,7 +16,7 @@
             ao3: 
           </p>
           <p class="avg-time">
-            12.56
+            {{ calcAvg(3) }}
           </p>
         </div>
         <div id="avg">
@@ -25,7 +24,7 @@
             average: 
           </p>
           <p class="avg-time">
-            12.56
+            {{ calcAvg() }}
           </p>
         </div>
         <div id="ao12">
@@ -33,22 +32,15 @@
             ao12: 
           </p>
           <p class="avg-time">
-            12.56
+            {{ calcAvg(12) }}
           </p>
         </div>
       </div>
-      <div id="time-table">
-
-      </div>
-      <div id="graph">
-      </div>
-
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import HelloWorld from './components/HelloWorld.vue';
 import Stopwatch from './components/Stopwatch.vue';
 import Vue from 'vue';
 import _ from 'underscore';
@@ -57,13 +49,24 @@ let waitTimeout;
 
 const app = Vue.component('app', {
   components: {
-    HelloWorld,
     Stopwatch
   },
   data: () => ({
     status: 'none',
     history: [],
   }),
+  methods: {
+    calcAvg (numSolves?:number){
+      if (!numSolves)
+        numSolves = this.history.length;
+      
+      if (numSolves > this.history.length || this.history.length == 0)
+        return "-";
+      
+      const solves = _(this.history).first(numSolves);
+      return ((_(solves).reduce((sum, time) => sum + time, 0) / numSolves)/1000).toFixed(2);
+    }
+  },
   
   created() {
     window.addEventListener('keydown', (e) => {
@@ -76,7 +79,14 @@ const app = Vue.component('app', {
       if (this.status === 'running'){
         timer.stop();
         this.status = 'none';
-        this.history.push(timer.time);
+        this.history.unshift(timer.time)
+        // this.$set(this.history.length, 0, timer.time)
+        // this.history.splice(this.history.length, 0, timer.time)
+        // const updated = this.history;
+        // updated.push(timer.time)
+        
+        // this.history = updated;
+        console.log('stop')
         console.log(this.history)
       }
       else {
@@ -164,4 +174,5 @@ html {
   display: flex;
   justify-content: space-around;
 }
+
 </style>
