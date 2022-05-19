@@ -65,29 +65,17 @@ const app = Vue.component('app', {
       
       const solves = _(this.history).first(numSolves);
       return ((_(solves).reduce((sum, time) => sum + time, 0) / numSolves)/1000).toFixed(2);
-    }
-  },
-  
-  created() {
-    window.addEventListener('keydown', (e) => {
+    }, 
+    handlePress (e){
       e.preventDefault();
       if (this.status === 'holding' || this.status === 'ready') 
         return;
-      
 
       const timer = this.$refs.Stopwatch;
       if (this.status === 'running'){
         timer.stop();
         this.status = 'none';
         this.history.unshift(timer.time)
-        // this.$set(this.history.length, 0, timer.time)
-        // this.history.splice(this.history.length, 0, timer.time)
-        // const updated = this.history;
-        // updated.push(timer.time)
-        
-        // this.history = updated;
-        console.log('stop')
-        console.log(this.history)
       }
       else {
         if (e.code === 'Space') {
@@ -98,9 +86,8 @@ const app = Vue.component('app', {
           }, 700);
         }
       }
-      
-    });
-    window.addEventListener('keyup', (e) => {
+    },
+    handleRelease(e){
       if (this.status === 'ready' && e.code === 'Space') {
         this.status = 'running';
         this.$refs.Stopwatch.start();
@@ -109,8 +96,12 @@ const app = Vue.component('app', {
         this.status = 'none';
         clearTimeout(waitTimeout);
       }
-
-    })            
+    }
+  },
+  
+  created() {
+    window.addEventListener('keydown', this.handlePress);
+    window.addEventListener('keyup', this.handleRelease);
   },
 })
 
